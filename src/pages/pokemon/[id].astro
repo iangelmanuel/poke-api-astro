@@ -1,0 +1,60 @@
+---
+import type { GetStaticPaths } from "astro"
+import MainLayout from "@/layout/MainLayout.astro"
+import type { PokemonListResponse } from "@/types/pokemon-list-response"
+import PokemonCard from "@/components/pokemons/PokemonCard.astro"
+
+export const getStaticPaths = (async () => {
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+  const { results } = (await res.json()) as PokemonListResponse
+
+  return results.map(({ name, url }) => {
+    const id = url.split("/").at(-2)
+
+    return {
+      params: { id },
+      props: { name, url: `https://pokeapi.co/api/v2/pokemon/${url}` }
+    }
+  })
+}) satisfies GetStaticPaths
+
+const { id } = Astro.params
+const { name, url } = Astro.props
+
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`
+---
+
+<MainLayout
+  title={name}
+  description="Pokémon details"
+>
+  <section class="mt-10 mx-10 flex flex-col justify-center items-center">
+    <div class="flex justify-between items-center gap-5">
+      <a href="/">Regresar</a>
+      <h1 class="text-3xl capitalize font-extrabold mb-3">{name}</h1>
+    </div>
+
+    <PokemonCard
+      name={name}
+      url={url}
+      isBig
+    />
+
+    <audio
+      controls
+      class="mt-5"
+    >
+      <source
+        src={audioSrc}
+        type="audio/ogg"
+      />
+      Tu navegador no soporta el elemento <code>audio</code>.
+    </audio>
+  </section>
+</MainLayout>
+
+<style>
+  a {
+    @apply hover:underline text-blue-500;
+  }
+</style>

@@ -1,0 +1,55 @@
+---
+const links = [
+  { href: "/", text: "Listado de Pokémon" },
+  { href: "/pokemons/1", text: "Paginado" },
+  { href: "/favorites", text: "Favoritos" },
+  { href: "/island", text: "Islas" },
+  { href: "/video", text: "Video" }
+]
+
+const { pathname } = Astro.url
+---
+
+<nav class="bg-white shadow dark:bg-slate-950">
+  <div
+    class="container flex items-center justify-center p-6 mx-auto text-gray-600 capitalize dark:text-gray-300"
+  >
+    <!-- {
+      links.map(({ href, text }, index) => (
+        <a
+          href={href}
+          transition:name={`navigation-${index}`}
+          class:list={[
+            "mx-4 font-semibold text-gray-800 dark:text-gray-200",
+            pathname === href
+              ? "border-b-2 border-blue-500"
+              : "border-transparent"
+          ]}
+        >
+          {text}
+        </a>
+      ))
+    } -->
+    {
+      links.map(({ href, text }) => (
+        <div>
+          <a
+            href={href}
+            class="mx-4 font-semibold text-gray-800 dark:text-gray-200"
+          >
+            {text}
+          </a>
+
+          {pathname === href ? (
+            <div
+              transition:name="menu-line"
+              class="border-b-2 border-blue-500 mx-4"
+            />
+          ) : (
+            <div class="mx-4 border-b-2 border-transparent" />
+          )}
+        </div>
+      ))
+    }
+  </div>
+</nav>

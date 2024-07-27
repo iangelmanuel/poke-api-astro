@@ -3,6 +3,8 @@ import type { GetStaticPaths } from "astro"
 import MainLayout from "@/layout/MainLayout.astro"
 import PokemonCard from "@/components/pokemons/PokemonCard.astro"
 import type { PokemonListResponse } from "@/types/pokemon-list-response"
+import Title from "@/components/shared/Title.astro"
+import { Icon } from "astro-icon/components"
 
 interface Props {
   url: string
@@ -33,9 +35,37 @@ const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
   image={imageSrc}
 >
   <section class="mt-10 mx-10 flex flex-col justify-center items-center">
-    <div class="flex justify-between items-center gap-5">
-      <a href="/">Regresar</a>
-      <h1 class="text-3xl capitalize font-extrabold mb-3">{name}</h1>
+    <div class="flex flex-row">
+      <div class="flex justify-between items-center gap-5">
+        <button
+          onclick="history.back()"
+          class="text-blue-500"
+          >← Regresar</button
+        >
+
+        <Title className="capitalize">
+          {name}
+        </Title>
+      </div>
+
+      <button
+        id="btn-favorite"
+        data-name={name}
+        data-id={pokemonId}
+        class="ml-4"
+      >
+        <Icon
+          name="heart-outline"
+          size={40}
+          data-outline
+        />
+        <Icon
+          name="heart-full"
+          size={40}
+          data-full
+          class="hidden"
+        />
+      </button>
     </div>
 
     <PokemonCard
@@ -57,8 +87,64 @@ const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
   </section>
 </MainLayout>
 
+<script>
+  import type { FavoritePokemon } from "@/types/favorite-pokemon"
+
+  const handlePageLoad = () => {
+    let favoritesPokemons: FavoritePokemon[] = JSON.parse(
+      localStorage.getItem("favoritePokemons") ?? "[]"
+    )
+
+    const $btnFavorite = document.querySelector(
+      "#btn-favorite"
+    ) as HTMLButtonElement
+
+    if (!$btnFavorite) return
+
+    const name = $btnFavorite.dataset.name ?? ""
+    const id = $btnFavorite.dataset.id ?? ""
+    const isFavorite = favoritesPokemons.some((fav) => fav.name === name)
+
+    const $heartOutline = $btnFavorite.querySelector(
+      "[data-outline]"
+    ) as HTMLElement
+
+    const $heartFull = $btnFavorite.querySelector("[data-full]") as HTMLElement
+
+    if (isFavorite) {
+      $heartFull.classList.toggle("hidden")
+      $heartOutline.classList.toggle("hidden")
+    }
+
+    const toggleFavorite = () => {
+      const isFavorite = favoritesPokemons.some((fav) => fav.name === name)
+
+      if (isFavorite) {
+        favoritesPokemons = favoritesPokemons.filter((fav) => fav.name !== name)
+      } else {
+        favoritesPokemons.push({ id: Number(id), name })
+      }
+
+      localStorage.setItem(
+        "favoritePokemons",
+        JSON.stringify(favoritesPokemons)
+      )
+
+      $heartFull.classList.toggle("hidden")
+      $heartOutline.classList.toggle("hidden")
+    }
+    $btnFavorite.addEventListener("click", toggleFavorite)
+  }
+
+  document.addEventListener("astro:page-load", handlePageLoad)
+</script>
+
 <style>
   a {
     @apply hover:underline text-blue-500;
+  }
+
+  #btn-favorite {
+    @apply hover:animate-pulse;
   }
 </style>

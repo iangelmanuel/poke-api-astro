@@ -1,5 +1,6 @@
 ---
 import PokemonCard from "@/components/pokemons/PokemonCard.astro"
+import Title from "@/components/shared/Title.astro"
 import MainLayout from "@/layout/MainLayout.astro"
 import type { PokemonListResponse } from "@/types/pokemon-list-response"
 
@@ -13,8 +14,7 @@ const data = (await res.json()) as PokemonListResponse
   title={title}
   description="Listado de pokémons de la primera generación de la franquicia Pokémon en una página estática."
 >
-  <h1 class="text-3xl">Listado de Pokémons</h1>
-  <hr />
+  <Title>Listado de Pokémons</Title>
 
   <section
     aria-label="Listado de Pokémon"

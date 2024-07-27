@@ -3,6 +3,7 @@ import type { GetStaticPaths } from "astro"
 import PokemonCard from "@/components/pokemons/PokemonCard.astro"
 import MainLayout from "@/layout/MainLayout.astro"
 import type { PokemonListResponse } from "@/types/pokemon-list-response"
+import Title from "@/components/shared/Title.astro"
 
 const title = "Pokémon Static | Home"
 
@@ -18,10 +19,9 @@ const { page } = Astro.props
 
 <MainLayout
   title={title}
-  description="Listado de pokémons de la primera generación de la franquicia Pokémon en una página estática."
+  description="Listado de pokémons paginados de la primera generación de la franquicia Pokémon en una página estática."
 >
-  <h1 class="text-3xl">Listado de Pokémons</h1>
-  <hr />
+  <Title> Listado de Pokémons Paginados </Title>
 
   <section
     aria-label="Listado de Pokémon"
